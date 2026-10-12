@@ -1,0 +1,43 @@
+{
+  "name": "koishi-plugin-super-tmp-bot",
+  "description": "欧洲卡车模拟2 TMP查询插件; Super Event 专用",
+  "version": "0.0.1",
+  "homepage": "https://github.com/murphy08/koishi-plugin-super-tmp-bot",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "sync:resources": "node scripts/copy-resources.js",
+    "build": "tsc -b && npm run sync:resources",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "plugin",
+    "truckersmp",
+    "gametool",
+    "ets2",
+    "tmp",
+    "super"
+  ],
+  "koishi": {
+    "service": {
+      "required": [
+        "database"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "koishi": "^4.18.7"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "js-md5": "^0.8.3",
+    "marked": "^12.0.2"
+  }
+}

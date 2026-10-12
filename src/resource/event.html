@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <link href="./package/prime-theme.css" rel="stylesheet">
+  <title>TruckersMP Event</title>
+  <style>
+    @font-face {
+      font-family: 'segui-emj';
+      src: url('./package/SEGUIEMJ.TTF');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    :root {
+      --accent: #E3A439;
+      --accent-soft: rgba(122, 101, 219, 0.18);
+      --accent-strong: rgba(122, 101, 219, 0.34);
+      --accent-glow: rgba(122, 101, 219, 0.56);
+      --bg-1: #050505;
+      --bg-2: #101010;
+      --bg-3: #11111b;
+      --panel: rgba(255, 255, 255, 0.07);
+      --panel-strong: rgba(255, 255, 255, 0.12);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.72);
+      --soft: rgba(255, 255, 255, 0.54);
+      --shadow: rgba(0, 0, 0, 0.46);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      padding: 24px;
+      color: var(--text);
+      font-family: 'segui-emj', 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(122, 101, 219, 0.28), transparent 42%),
+        linear-gradient(180deg, #111111 0%, #000000 100%);
+      background-color: var(--bg-1);
+    }
+
+    a,
+    a * {
+      pointer-events: none !important;
+      cursor: default !important;
+    }
+
+    #event-card {
+      position: relative;
+      width: 1560px;
+      max-width: calc(100vw - 48px);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 38px;
+      background:
+        linear-gradient(160deg, rgba(122, 101, 219, 0.22) 0%, rgba(122, 101, 219, 0.05) 30%, rgba(0, 0, 0, 0.97) 100%);
+      box-shadow:
+        0 32px 84px rgba(0, 0, 0, 0.56),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    #event-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 24%),
+        linear-gradient(180deg, transparent, rgba(122, 101, 219, 0.12));
+      pointer-events: none;
+    }
+
+    .hero-wrap {
+      position: relative;
+      padding: 24px 24px 0;
+    }
+
+    .hero-banner {
+      position: relative;
+      aspect-ratio: 1920 / 500;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background:
+        linear-gradient(135deg, rgba(122, 101, 219, 0.24), rgba(255, 255, 255, 0.04)),
+        rgba(0, 0, 0, 0.34);
+      box-shadow:
+        0 22px 54px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-banner img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.005);
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.68)),
+        linear-gradient(135deg, rgba(122, 101, 219, 0.36), transparent 42%),
+        linear-gradient(0deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.18));
+      pointer-events: none;
+    }
+
+    .hero-topbar {
+      position: absolute;
+      top: 22px;
+      left: 26px;
+      right: 26px;
+      z-index: 2;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.34);
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-id {
+      padding: 12px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.38);
+      color: var(--text);
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: 0.06em;
+      text-align: right;
+      text-shadow: 0 6px 18px rgba(0, 0, 0, 0.34);
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-center {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 82px 72px 106px;
+      text-align: center;
+    }
+
+    .event-type {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(0, 0, 0, 0.32);
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+    }
+
+    .event-name {
+      margin: 22px 0 18px;
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1.02;
+      letter-spacing: 0.02em;
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.42);
+      word-break: break-word;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .hero-meta-item {
+      min-width: 300px;
+      max-width: 100%;
+      padding: 14px 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.34);
+      color: var(--text);
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.2;
+      backdrop-filter: blur(4px);
+      text-shadow: 0 8px 24px rgba(0, 0, 0, 0.36);
+      word-break: break-word;
+    }
+
+    .content {
+      position: relative;
+      padding: 24px;
+    }
+
+    .section {
+      margin-top: 18px;
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .section:first-child {
+      margin-top: 0;
+    }
+
+    .section-title {
+      margin-bottom: 18px;
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .place-grid,
+    .overview-grid,
+    .time-grid,
+    .link-grid,
+    .stats {
+      display: grid;
+      gap: 14px;
+    }
+
+    .overview-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .place-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .time-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .place-card,
+    .overview-card,
+    .time-card,
+    .stat-card,
+    .link-card,
+    .field-card,
+    .rich-box {
+      min-width: 0;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.22);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+
+    .place-card {
+      padding: 24px;
+    }
+
+    .place-title {
+      margin-bottom: 16px;
+      color: var(--text);
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .place-label,
+    .field-card .label,
+    .link-card .label,
+    .time-pill span {
+      display: block;
+      margin-bottom: 10px;
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .place-city {
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .place-note {
+      margin-top: 12px;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.45;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .time-card {
+      padding: 24px;
+      background: linear-gradient(140deg, rgba(122, 101, 219, 0.22), rgba(255, 255, 255, 0.04));
+    }
+
+    .time-card h3 {
+      margin: 0 0 14px;
+      color: var(--text);
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .time-pair {
+      display: grid;
+      gap: 10px;
+    }
+
+    .time-pill {
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.24);
+      color: var(--text);
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .field-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field-card {
+      padding: 22px;
+    }
+
+    .overview-card {
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.22);
+    }
+
+    .overview-card .label {
+      display: block;
+      margin-bottom: 16px;
+      color: var(--text);
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .overview-card .value {
+      color: var(--text);
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    .field-card .value {
+      color: var(--text);
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .stat-card {
+      padding: 24px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(122, 101, 219, 0.2), rgba(255, 255, 255, 0.04));
+    }
+
+    .stat-card span {
+      display: block;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .stat-card strong {
+      display: block;
+      margin-top: 10px;
+      color: var(--text);
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .map-card {
+      position: relative;
+      min-height: 680px;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.24);
+    }
+
+    .map-card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .map-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.24));
+      pointer-events: none;
+    }
+
+    .map-tag {
+      position: absolute;
+      top: 22px;
+      left: 22px;
+      z-index: 1;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .link-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .link-card {
+      padding: 20px;
+    }
+
+    .link-card .value {
+      color: var(--text);
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.5;
+      word-break: break-all;
+    }
+
+    .dlc-wrap {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .dlc-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 120px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(135deg, rgba(122, 101, 219, 0.22), rgba(255, 255, 255, 0.04)),
+        rgba(255, 255, 255, 0.03);
+    }
+
+    .dlc-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.32;
+    }
+
+    .dlc-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(7, 9, 11, 0.92), rgba(7, 9, 11, 0.46));
+    }
+
+    .dlc-copy {
+      position: relative;
+      z-index: 1;
+      padding: 20px 22px;
+    }
+
+    .dlc-copy strong {
+      display: block;
+      color: var(--text);
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    .dlc-copy span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .empty-note {
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px dashed rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .rich-box {
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(122, 101, 219, 0.12), rgba(0, 0, 0, 0.18));
+    }
+
+    .rich-title {
+      margin-bottom: 18px;
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .rich-content {
+      color: var(--text);
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.72;
+      word-break: break-word;
+    }
+
+    .rich-content > :first-child {
+      margin-top: 0;
+    }
+
+    .rich-content > :last-child {
+      margin-bottom: 0;
+    }
+
+    .rich-content h1,
+    .rich-content h2,
+    .rich-content h3,
+    .rich-content h4 {
+      margin: 1.1em 0 0.6em;
+      color: var(--text);
+      font-weight: 900;
+      line-height: 1.32;
+    }
+
+    .rich-content p,
+    .rich-content li {
+      color: var(--text);
+    }
+
+    .rich-content a,
+    .rich-content .disabled-link {
+      color: #E3A439;
+      text-decoration: none;
+    }
+
+    .rich-content img {
+      max-width: 100%;
+      border-radius: 22px;
+      margin: 14px 0;
+      display: none;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .rich-content blockquote {
+      margin: 16px 0;
+      padding: 14px 16px 14px 18px;
+      border-left: 3px solid var(--accent);
+      border-radius: 0 16px 16px 0;
+      background: rgba(122, 101, 219, 0.14);
+      color: var(--muted);
+    }
+
+    .rich-content code {
+      padding: 2px 6px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 0.92em;
+    }
+
+    @media (max-width: 1180px) {
+      .event-name {
+        font-size: 56px;
+      }
+
+      .hero-meta-item {
+        font-size: 24px;
+      }
+
+      .field-grid.three,
+      .overview-grid,
+      .stats,
+      .dlc-wrap,
+      .field-grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      body {
+        padding: 12px;
+      }
+
+      #event-card {
+        max-width: calc(100vw - 24px);
+      }
+
+      .hero-banner {
+        aspect-ratio: 1920 / 500;
+        min-height: 220px;
+      }
+
+      .hero-center {
+        padding: 60px 22px 118px;
+      }
+
+      .event-name {
+        font-size: 40px;
+      }
+
+      .hero-meta-item {
+        min-width: 0;
+        width: 100%;
+        font-size: 22px;
+      }
+
+      .place-grid,
+      .overview-grid,
+      .time-grid,
+      .stats,
+      .field-grid.two,
+      .field-grid.three,
+      .link-grid,
+      .dlc-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .place-city {
+        font-size: 34px;
+      }
+
+      .overview-card .label {
+        font-size: 30px;
+      }
+
+      .overview-card .value {
+        font-size: 34px;
+      }
+
+      .map-card {
+        min-height: 380px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="event-card">
+    <div class="hero-wrap">
+      <div class="hero-banner" id="hero-poster-box">
+        <img id="hero-poster" src="" alt="banner">
+        <div class="hero-topbar">
+          <div class="eyebrow">Super Event</div>
+          <div class="hero-id" id="event-id-line">ID:-</div>
+        </div>
+        <div class="hero-center">
+          <div class="event-type" id="event-type">活动</div>
+          <div class="event-name" id="event-name">-</div>
+          <div class="hero-meta">
+            <div class="hero-meta-item" id="event-organizer-line">-</div>
+            <div class="hero-meta-item" id="vtc-id-line">VTCID: -</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <div class="section-title">活动概览</div>
+        <div class="overview-grid">
+          <div class="overview-card">
+            <div class="label">游戏</div>
+            <div class="value" id="event-game">-</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">服务器</div>
+            <div class="value" id="event-server">-</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">语言</div>
+            <div class="value" id="event-language">-</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">活动类型</div>
+            <div class="value" id="event-type-name">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">地点信息</div>
+        <div class="place-grid">
+          <div class="place-card">
+            <div class="place-title">出发地点</div>
+            <span class="place-label">地点</span>
+            <div class="place-city" id="departure-city">-</div>
+            <div class="place-note" id="departure-location">-</div>
+          </div>
+          <div class="place-card">
+            <div class="place-title">到达地点</div>
+            <span class="place-label">地点</span>
+            <div class="place-city" id="arrive-city">-</div>
+            <div class="place-note" id="arrive-location">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">时间信息</div>
+        <div class="time-grid">
+          <div class="time-card">
+            <h3>集合时间</h3>
+            <div class="time-pair">
+              <div class="time-pill">
+                <span>UTC</span>
+                <div id="meetup-utc">-</div>
+              </div>
+              <div class="time-pill">
+                <span>北京时间</span>
+                <div id="meetup-bj">-</div>
+              </div>
+            </div>
+          </div>
+          <div class="time-card">
+            <h3>发车时间</h3>
+            <div class="time-pair">
+              <div class="time-pill">
+                <span>UTC</span>
+                <div id="start-utc">-</div>
+              </div>
+              <div class="time-pill">
+                <span>北京时间</span>
+                <div id="start-bj">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">VTC 与参与情况</div>
+        <div class="field-grid three" style="margin-bottom: 14px;">
+          <div class="field-card">
+            <div class="label">VTC ID</div>
+            <div class="value" id="vtc-id">-</div>
+          </div>
+          <div class="field-card">
+            <div class="label">VTC 名称</div>
+            <div class="value" id="vtc-name">-</div>
+          </div>
+          <div class="field-card">
+            <div class="label">主办用户</div>
+            <div class="value" id="event-user">-</div>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat-card">
+            <span>确认参加</span>
+            <strong id="stat-confirmed">-</strong>
+          </div>
+          <div class="stat-card">
+            <span>待定</span>
+            <strong id="stat-unsure">-</strong>
+          </div>
+          <div class="stat-card">
+            <span>VTC 数</span>
+            <strong id="stat-vtcs">-</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="media-section">
+        <div class="section-title">路线图</div>
+        <div class="map-card" id="map-card">
+          <div class="map-tag">路线图</div>
+          <img id="map-image" src="" alt="map">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">DLC 列表</div>
+        <div class="dlc-wrap" id="dlc-wrap"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">详细内容</div>
+        <div class="field-grid two">
+          <div class="rich-box" id="description-box">
+            <div class="rich-title">活动简介</div>
+            <div class="rich-content" id="description-content"></div>
+          </div>
+          <div class="rich-box" id="rule-box">
+            <div class="rich-title">活动规则</div>
+            <div class="rich-content" id="rule-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function waitForImageReady(image) {
+      return new Promise((resolve) => {
+        if (!image || !image.getAttribute('src')) {
+          resolve();
+          return;
+        }
+
+        if (image.complete) {
+          resolve();
+          return;
+        }
+
+        const done = () => {
+          image.removeEventListener('load', done);
+          image.removeEventListener('error', done);
+          resolve();
+        };
+
+        image.addEventListener('load', done, { once: true });
+        image.addEventListener('error', done, { once: true });
+        setTimeout(done, 10000);
+      });
+    }
+
+    function waitForNextFrame() {
+      return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+    }
+
+    async function waitForStableLayout() {
+      let previousHeight = 0;
+
+      for (let i = 0; i < 6; i++) {
+        await waitForNextFrame();
+        await new Promise((resolve) => setTimeout(resolve, 120));
+
+        const element = document.getElementById('event-card');
+        const currentHeight = Math.ceil(element.getBoundingClientRect().height);
+        if (currentHeight === previousHeight) {
+          return;
+        }
+
+        previousHeight = currentHeight;
+      }
+    }
+
+    function setText(id, value) {
+      const element = document.getElementById(id);
+      if (!element) return;
+      element.textContent = value || '-';
+    }
+
+    function setImage(id, url, boxId) {
+      const image = document.getElementById(id);
+      const box = document.getElementById(boxId);
+      if (!url) {
+        if (box) box.style.display = 'none';
+        return;
+      }
+      image.src = url;
+      image.onerror = () => {
+        if (box) box.style.display = 'none';
+      };
+    }
+
+    function disableLinks(root) {
+      if (!root) return;
+      root.querySelectorAll('a').forEach((anchor) => {
+        anchor.removeAttribute('href');
+        anchor.removeAttribute('target');
+        anchor.removeAttribute('rel');
+        anchor.classList.add('disabled-link');
+      });
+    }
+
+    function setRich(boxId, contentId, html) {
+      const box = document.getElementById(boxId);
+      const content = document.getElementById(contentId);
+      if (!html) {
+        box.style.display = 'none';
+        return;
+      }
+      content.innerHTML = html;
+      disableLinks(content);
+    }
+
+    function renderDlcs(dlcs) {
+      const wrap = document.getElementById('dlc-wrap');
+      wrap.innerHTML = '';
+
+      if (!Array.isArray(dlcs) || !dlcs.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-note';
+        empty.style.gridColumn = '1 / -1';
+        empty.textContent = '无额外 DLC 要求，标准地图就能参加。';
+        wrap.appendChild(empty);
+        return;
+      }
+
+      dlcs.forEach((dlc) => {
+        const card = document.createElement('div');
+        card.className = 'dlc-card';
+        card.innerHTML = `
+          <img src="${dlc.image || ''}" alt="${dlc.name}" />
+          <div class="dlc-copy">
+            <strong>${dlc.name}</strong>
+            <span>Steam App ${dlc.id}</span>
+          </div>
+        `;
+        const image = card.querySelector('img');
+        image.onerror = () => {
+          image.style.display = 'none';
+        };
+        wrap.appendChild(card);
+      });
+    }
+
+    function renderEvent(data) {
+      setText('event-type', data.eventTypeKey || data.eventType || 'event');
+      setText('event-type-name', data.eventType || '-');
+      setText('event-name', data.name || '-');
+      setText('event-game', data.game || '-');
+      setText('event-server', data.serverName || '-');
+      setText('event-language', data.language || '-');
+      setText('departure-city', data.departureCity || '-');
+      setText('departure-location', data.departureLocation || '-');
+      setText('arrive-city', data.arriveCity || '-');
+      setText('arrive-location', data.arriveLocation || '-');
+      setText('meetup-utc', data.meetupUtc || '-');
+      setText('meetup-bj', data.meetupBeijing || '-');
+      setText('start-utc', data.startUtc || '-');
+      setText('start-bj', data.startBeijing || '-');
+      setText('vtc-id', data.vtcId ? String(data.vtcId) : '-');
+      setText('vtc-name', data.vtcName || '-');
+      setText('event-user', data.user && data.user.username ? data.user.username : '-');
+      setText('stat-confirmed', String(data.attendances && data.attendances.confirmed != null ? data.attendances.confirmed : '-'));
+      setText('stat-unsure', String(data.attendances && data.attendances.unsure != null ? data.attendances.unsure : '-'));
+      setText('stat-vtcs', String(data.attendances && data.attendances.vtcs != null ? data.attendances.vtcs : '-'));
+
+      setText('event-id-line', `ID:${data.id || '-'}`);
+      setText('event-organizer-line', data.vtcName || '-');
+      setText('vtc-id-line', data.vtcId ? String(data.vtcId) : '-');
+
+      setImage('hero-poster', data.banner || data.map || '', 'hero-poster-box');
+      setImage('map-image', data.map || '', 'map-card');
+
+      if (!data.banner && !data.map) {
+        document.getElementById('hero-poster-box').style.display = 'none';
+      }
+
+      if (!data.map) {
+        document.getElementById('media-section').style.display = 'none';
+      }
+
+      renderDlcs(data.dlcs);
+      setRich('description-box', 'description-content', data.descriptionHtml);
+      setRich('rule-box', 'rule-content', data.ruleHtml);
+    }
+
+    async function prepareEventRender() {
+      if (document.fonts && document.fonts.ready) {
+        try {
+          await document.fonts.ready;
+        } catch {}
+      }
+
+      const images = Array.from(document.querySelectorAll('img'));
+      await Promise.all(images.map(waitForImageReady));
+      await waitForNextFrame();
+      await waitForNextFrame();
+      await waitForStableLayout();
+    }
+
+    window.renderEvent = renderEvent;
+    window.prepareEventRender = prepareEventRender;
+  </script>
+</body>
+</html>

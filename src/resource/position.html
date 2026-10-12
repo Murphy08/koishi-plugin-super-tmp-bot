@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>实时位置</title>
+  <link href="./package/leaflet/leaflet.min.css" rel="stylesheet">
+  <link href="./package/prime-theme.css" rel="stylesheet">
+  <script src="./package/leaflet/leaflet.min.js"></script>
+  <script src="./package/ets-map.js"></script>
+  <style>
+    @font-face {
+      font-family: 'segui-emj';
+      src: url('./package/SEGUIEMJ.TTF');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    :root {
+      --accent: #E3A439;
+      --white: #ffffff;
+      --muted: rgba(255, 255, 255, 0.72);
+      --line: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top, rgba(122, 101, 219, 0.28), transparent 42%),
+        linear-gradient(180deg, #111111 0%, #000000 100%);
+      font-family: 'segui-emj', 'Segoe UI', sans-serif;
+      color: var(--white);
+    }
+
+    #container {
+      position: relative;
+      width: 720px;
+      height: 500px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(160deg, rgba(122, 101, 219, 0.2) 0%, rgba(122, 101, 219, 0.05) 28%, rgba(0, 0, 0, 0.97) 100%);
+      box-shadow:
+        0 22px 48px rgba(0, 0, 0, 0.52),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    #container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 24%),
+        linear-gradient(180deg, transparent, rgba(122, 101, 219, 0.12));
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .map {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(10, 10, 10, 0.65), rgba(0, 0, 0, 0.2));
+    }
+
+    .page-header {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 5;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .header-kicker {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .header-title {
+      margin-top: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .header-subtitle {
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .header-logo {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow:
+        0 12px 26px rgba(122, 101, 219, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .header-logo img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+
+    .user-info-box {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 5;
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      background: rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 16px 34px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .avatar {
+      width: 62px;
+      height: 62px;
+      flex-shrink: 0;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .user {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: var(--white);
+    }
+
+    .username {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .server-name-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .server-name {
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .location-box {
+      min-width: 220px;
+      padding-left: 16px;
+      border-left: 3px solid var(--accent);
+      text-align: right;
+      color: var(--white);
+    }
+
+    .country,
+    .real-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .country {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .real-name {
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .leaflet-container {
+      background: rgba(0, 0, 0, 0.3);
+    }
+    .player-arrow { width: 24px; height: 24px; display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 2px 4px rgba(0,0,0,.7)); }
+    .player-arrow::before { content:''; display:block; width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:20px solid #fff; }
+    .player-arrow.current::before { border-left-width:11px; border-right-width:11px; border-bottom-width:28px; border-bottom-color:#E3A439; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="map" class="map"></div>
+
+    <div class="page-header">
+      <div>
+        <div class="header-kicker">Super Event</div>
+        <div class="header-title">实时位置</div>
+        <div class="header-subtitle">车队地图快照</div>
+      </div>
+      <div class="header-logo">
+        <img src="./package/img/logo2.png" alt="Logo">
+      </div>
+    </div>
+
+    <div class="user-info-box">
+      <img class="avatar" src="https://static.truckersmp.com/avatarsN/small/defaultavatar.png" alt="avatar">
+      <div class="user">
+        <div class="username">...</div>
+        <div class="server-name-box">
+          <span class="server-name">...</span>
+          <span>在线</span>
+        </div>
+      </div>
+      <div class="location-box">
+        <div class="country">...</div>
+        <div class="real-name">...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let map;
+
+    function setData(data) {
+      map = L.map('map', {
+        attributionControl: false,
+        crs: createTmpMapCrs(data.mapType),
+        zoomControl: false,
+        minZoom: -3,
+        maxZoom: 3
+      });
+      const bounds = getTmpMapBounds(data.mapType);
+      map.setMaxBounds(bounds);
+
+      const tileLayer = createTmpTileLayer(data.mapType, map);
+      markTmpMapReadyWhenTilesLoad(tileLayer);
+      tileLayer.addTo(map);
+
+      document.getElementsByClassName('avatar')[0].src = data.avatar;
+      document.getElementsByClassName('username')[0].innerText = data.username;
+      document.getElementsByClassName('server-name')[0].innerText = data.serverName;
+      document.getElementsByClassName('country')[0].innerText = data.country;
+      document.getElementsByClassName('real-name')[0].innerText = data.realName;
+
+      for (let player of data.playerList) {
+        const current = data.currentPlayerId.toString() === player.tmpId.toString();
+        const heading = Number(player.heading);
+        const rotation = Number.isFinite(heading) ? heading * 180 / Math.PI : 0;
+        L.marker(getTmpMapLatLng(data.mapType, player.axisX, player.axisY), {
+          zIndexOffset: current ? 1000 : 0,
+          icon: L.divIcon({ className: '', iconSize: [current ? 30 : 24, current ? 30 : 24], iconAnchor: [current ? 15 : 12, current ? 15 : 12], html: `<div class="player-arrow${current ? ' current' : ''}" style="transform:rotate(${rotation}deg)"></div>` })
+        }).addTo(map);
+      }
+
+      map.setView(getTmpMapLatLng(data.mapType, data.centerX, data.centerY + 80), 2);
+
+    }
+  </script>
+</body>
+</html>
