@@ -266,7 +266,7 @@
         attributionControl: false,
         crs: createTmpMapCrs(data.mapType),
         zoomControl: false,
-        zoomSnap: 1,
+        zoomSnap: 0.25,
         minZoom: -3,
         maxZoom: 3
       });
@@ -277,12 +277,12 @@
       markTmpMapReadyWhenTilesLoad(tileLayer);
       tileLayer.addTo(map);
 
-      map.setView(bounds.getCenter(), -2);
+      map.setView(bounds.getCenter(), -1.75);
 
       let heatmapLayer = new HeatmapOverlay({
-        radius: 5,
+        radius: 16,
         maxOpacity: 0.85,
-        scaleRadius: true,
+        scaleRadius: false,
         useLocalExtrema: true,
         latField: 'lat',
         lngField: 'lng',
